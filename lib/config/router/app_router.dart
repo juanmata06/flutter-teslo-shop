@@ -7,8 +7,7 @@ import 'package:teslo_shop/features/products/products_export.dart';
 final appRouter = GoRouter(
   initialLocation: '/login',
   routes: [
-
-    ///* Auth Routes
+    //* Auth Routes
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
@@ -18,7 +17,7 @@ final appRouter = GoRouter(
       builder: (context, state) => const RegisterScreen(),
     ),
 
-    ///* Product Routes
+    //* Product Routes
     GoRoute(
       path: '/',
       builder: (context, state) => const ProductsScreen(),
