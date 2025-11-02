@@ -1,9 +1,17 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class Enviroment {
-  static initEnviroment() async {
+class Environment {
+  static Future<void> initEnvironment() async {
     await dotenv.load(fileName: ".env");
   }
 
-  static String apiUrl = dotenv.env['API_URL'] ?? 'No API_URL configured.';
+  static final String apiUrl = dotenv.env['API_URL'] ?? 'No API_URL configured.';
+
+  static final Map<String, dynamic> endpoints = {
+    'auth': {
+      'login': '/auth/login',
+      'register': '/auth/register',
+      'check-status': '/auth/check-status',
+    },
+  };
 }

@@ -1,16 +1,25 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:formz/formz.dart';
 
+import 'package:teslo_shop/features/auth/auth_export.dart';
 import 'package:teslo_shop/features/shared/shared_export.dart';
 
 //* 3 - StateNotifierProvider - how the provider is consumed:
 final registerFormProvider = StateNotifierProvider.autoDispose<RegisterFormNotifier, RegisterFormState>((ref) {
-  return RegisterFormNotifier();
+  final registerUserCallBack = ref.watch(authProvider.notifier).registerUser;
+
+  return RegisterFormNotifier(
+    registerUserCallBack: registerUserCallBack
+  );
 });
 
 //* 2 - Notifier implementation:
 class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
-  RegisterFormNotifier() : super(RegisterFormState());
+  final Function(String, String, String) registerUserCallBack;
+
+  RegisterFormNotifier({
+    required this.registerUserCallBack
+  }) : super(RegisterFormState());
 
   onNameChange(String value) {
     final newName = TextInput.dirty(value);
@@ -37,23 +46,23 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
   }
 
   onPasswordConfirmationChange(String value) {
-  final newPasswordConfirmation = PasswordConfirmation.dirty(
-    value: value,
-    originalPassword: state.password.value,
-  );
+    final newPasswordConfirmation = PasswordConfirmation.dirty(
+      value: value,
+      originalPassword: state.password.value,
+    );
 
-  state = state.copyWith(
-    passwordConfirmation: newPasswordConfirmation,
-    isValid: Formz.validate([newPasswordConfirmation, state.passwordConfirmation]),
-  );
-}
+    state = state.copyWith(
+      passwordConfirmation: newPasswordConfirmation,
+      isValid: Formz.validate([newPasswordConfirmation, state.passwordConfirmation]),
+    );
+  }
 
-  onFormSubmit() {
+  onFormSubmit() async {
     _markAllFieldsAsTouched();
 
     if (!state.isValid) return;
 
-    print(state);
+    await registerUserCallBack(state.email.value, state.password.value, state.name.value);
   }
 
   _markAllFieldsAsTouched() {

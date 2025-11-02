@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:teslo_shop/features/auth/presentation/providers/auth_provider.dart';
 
 import 'package:teslo_shop/features/shared/shared_export.dart';
 import 'package:teslo_shop/features/auth/auth_export.dart';
@@ -56,10 +57,22 @@ class LoginScreen extends StatelessWidget {
 class _LoginForm extends ConsumerWidget {
   const _LoginForm();
 
+  void showSnackBar(BuildContext context, String errorMessage) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage))
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
     final loginFormState = ref.watch(loginFormProvider);
+    ref.listen(authProvider, (previous, next) { 
+      if(next.errorMessage.isEmpty) return;
+      showSnackBar(context, next.errorMessage);
+    });
+
     final textStyles = Theme.of(context).textTheme;
 
     return Padding(
